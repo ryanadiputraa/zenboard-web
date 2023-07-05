@@ -19,7 +19,7 @@ export default function Auth(): JSX.Element {
   useEffect(() => {
     if (!jwtToken.access_token) return
     setAccessTokens(jwtToken)
-    redirect("/")
+    redirect("/dashboard")
   }, [jwtToken.access_token])
 
   return (
