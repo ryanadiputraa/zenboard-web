@@ -6,5 +6,5 @@ import { useContext } from "react"
 export default function Dashboard(): JSX.Element {
   const { main } = useContext(AppContext)
 
-  return <div>Dashboard</div>
+  return <div className="px-4 py-2 bg-grey-light h-full">Dashboard</div>
 }

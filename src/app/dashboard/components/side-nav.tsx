@@ -41,13 +41,13 @@ export function SideNav(): JSX.Element {
 
   return (
     <nav
-      className={`z-50 transition-all duration-150 bg-primary text-secondary fixed sm:left-0 top-0 min-h-screen flex flex-col gap-6 pt-6 ${
+      className={`z-50 transition-all duration-150 bg-primary text-white fixed sm:left-0 top-0 min-h-screen flex flex-col gap-6 pt-6 ${
         main.isSidebarOpen
-          ? "w-3/4 sm:w-64 left-0 items-start"
+          ? "hidden sm:flex w-48 left-0 items-start"
           : "w-3/4 sm:w-16 left-[-100%] sm:right-auto items-start sm:items-center"
       }`}
     >
-      <Link href="/" className="cursor-pointer">
+      <Link href="/" className="cursor-pointer sm:self-center">
         <h1
           className={`font-bold px-4 ${
             main.isSidebarOpen ? "text-2xl" : "text-[0.6rem]"
@@ -57,9 +57,7 @@ export function SideNav(): JSX.Element {
         </h1>
       </Link>
       <button
-        className={`bg-accent font-bold text-secondary w-8 h-8 grid place-items-center p-2 rounded-full self-end relative ${
-          main.isSidebarOpen ? "left-4" : "left-3"
-        } bottom-14 sm:bottom-auto shadow-xl hover:brightness-95 ${
+        className={`bg-accent font-bold text-white w-7 h-7 hidden sm:grid place-items-center p-1 rounded-full self-end relative left-3 bottom-14 sm:bottom-auto shadow-xl hover:brightness-95 ${
           animateRotate ? "animate-rotate" : ""
         }`}
         onClick={() => {
