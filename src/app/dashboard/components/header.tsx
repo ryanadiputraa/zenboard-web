@@ -31,7 +31,7 @@ export function Header(): JSX.Element {
           )}
           <div className="flex flex-col justify-between text-xs">
             <h4 className="font-bold">
-              {userInfo.first_name + userInfo.last_name}
+              {`${userInfo.first_name} ${userInfo.last_name}`}
             </h4>
             <span className="text-grey">{userInfo.email}</span>
           </div>

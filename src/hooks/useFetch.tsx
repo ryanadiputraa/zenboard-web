@@ -1,6 +1,6 @@
 "use client"
 
-import { fetchUserInfo, refreshAccessToken } from "./user"
+import { fetchUserInfo, refreshAccessToken } from "@/data/user"
 
 export type FetchResponse<T> = {
   data: T

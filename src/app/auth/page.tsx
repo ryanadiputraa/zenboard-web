@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import { redirect, useSearchParams } from "next/navigation"
 
-import { useFetch, JWTToken } from "@/hooks/fetch"
+import { useFetch, JWTToken } from "@/hooks/useFetch"
 
 export default function Auth(): JSX.Element {
   const searchParams = useSearchParams()

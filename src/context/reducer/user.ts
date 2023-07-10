@@ -1,4 +1,4 @@
-import { UserInfo } from "@/hooks/fetch/user"
+import { UserInfo } from "@/data/user"
 
 export const userReducer = (state: UserState, action: UserActions) => {
   switch (action.type) {

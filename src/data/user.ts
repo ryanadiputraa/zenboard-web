@@ -1,4 +1,4 @@
-import { FetchResponse, JWTToken, parseErrorMsg } from "."
+import { FetchResponse, JWTToken, parseErrorMsg } from "../hooks/useFetch"
 
 export interface UserInfo {
   id: string
