@@ -12,7 +12,7 @@ export function Header(): JSX.Element {
   const { userInfo } = user
 
   return (
-    <header className="flex justify-between items-center px-4 py-3 border-b-2 border-gray-300 shadow-md">
+    <header className="flex justify-between items-center px-4 h-[8%] border-b-2 border-gray-300 shadow-md">
       <div className="capitalize font-bold">
         {main.activeDashboardPage.label}
       </div>
