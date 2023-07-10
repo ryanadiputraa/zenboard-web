@@ -1,7 +1,8 @@
 "use client"
 
 import React, { createContext, Dispatch, useReducer } from "react"
-import { AiOutlineHome } from "react-icons/ai"
+import { AiOutlineHome, AiOutlineSetting } from "react-icons/ai"
+
 import { MainActions, mainReducer, MainState } from "./reducer/main"
 import { UserActions, userReducer, UserState } from "./reducer/user"
 
@@ -13,17 +14,22 @@ type InitialStateType = {
 const initialState: InitialStateType = {
   main: {
     isSidebarOpen: true,
-    dashboardPages: [
-      {
-        label: "Dashboard",
+    dashboardPages: {
+      dashboard: {
+        label: "dashboard",
         ico: <AiOutlineHome />,
         link: "/dashboard",
       },
-    ],
+      settings: {
+        label: "settings",
+        ico: <AiOutlineSetting />,
+        link: "/dashboard/settings",
+      },
+    },
     activeDashboardPage: {
-      label: "Dashboard",
-      ico: <AiOutlineHome />,
-      link: "/dashboard",
+      label: "",
+      ico: <></>,
+      link: "",
     },
   },
   user: {

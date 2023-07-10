@@ -21,18 +21,20 @@ export const mainReducer = (state: MainState, action: MainActions) => {
 
 export interface MainState {
   isSidebarOpen: boolean
-  dashboardPages: Page[]
-  activeDashboardPage: Page
+  dashboardPages: DashboardPages
+  activeDashboardPage: DashboardPage
 }
 
 export type MainActions =
   | { type: "TOGGLE_SIDEBAR" }
-  | { type: "SET_ACTIVE_DASHBOARD_PAGE"; payload: Page }
+  | { type: "SET_ACTIVE_DASHBOARD_PAGE"; payload: DashboardPage }
 
-export type DashboardPageList = "Dashboard" | "Settings"
+export interface DashboardPages {
+  [label: string]: DashboardPage
+}
 
-export interface Page {
-  label: DashboardPageList
+export interface DashboardPage {
+  label: string
   ico: ReactElement
   link: string
 }

@@ -3,13 +3,16 @@
 import { ReactNode, useContext } from "react"
 
 import { AppContext } from "@/context"
-import { Header } from "./header"
 import { useFetchUserInfo } from "@/hooks/user/useFetchUserInfo"
+import { useActiveDashboardPage } from "@/hooks/core/useActiveDashboardPage"
+
+import { Header } from "./header"
 
 export function Wrapper({ children }: { children: ReactNode }): JSX.Element {
   const { main } = useContext(AppContext)
 
   useFetchUserInfo()
+  useActiveDashboardPage()
 
   return (
     <main

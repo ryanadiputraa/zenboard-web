@@ -3,16 +3,15 @@
 import Link from "next/link"
 import { useContext, useState } from "react"
 import { RiArrowLeftRightLine } from "react-icons/ri"
-import { AiOutlineSetting } from "react-icons/ai"
 
 import { AppContext } from "@/context"
-import { Page } from "@/context/reducer/main"
+import { DashboardPage } from "@/context/reducer/main"
 
 export function SideNav(): JSX.Element {
   const { main, mainDispatch } = useContext(AppContext)
   const [animateRotate, setAnimateRotate] = useState(false)
 
-  const MenuBtn: React.FC<{ page: Page }> = ({ page }) => (
+  const MenuBtn: React.FC<{ page: DashboardPage }> = ({ page }) => (
     <Link href={page.link}>
       <li
         className={`flex items-center text-xl gap-2 px-4 py-4 cursor-pointer hover:bg-primary-light ${
@@ -31,7 +30,9 @@ export function SideNav(): JSX.Element {
       >
         {page.ico}{" "}
         <span
-          className={`text-sm ${!main.isSidebarOpen ? "inline sm:hidden" : ""}`}
+          className={`text-sm capitalize ${
+            !main.isSidebarOpen ? "inline sm:hidden" : ""
+          }`}
         >
           {page.label}
         </span>
@@ -76,19 +77,14 @@ export function SideNav(): JSX.Element {
         >
           <span className="text-grey mb-4 text-sm px-4">Menu</span>
           <ul className="w-full flex flex-col gap-1">
-            {main.dashboardPages.map((page) => (
-              <MenuBtn page={page} key={page.label} />
-            ))}
+            {Object.keys(main.dashboardPages).map((label) => {
+              if (label === "settings") return
+              return <MenuBtn page={main.dashboardPages[label]} key={label} />
+            })}
           </ul>
         </div>
         <div className="w-full">
-          <MenuBtn
-            page={{
-              label: "Settings",
-              ico: <AiOutlineSetting />,
-              link: "/dashboard/settings",
-            }}
-          />
+          <MenuBtn page={main.dashboardPages["settings"]} />
         </div>
       </div>
     </nav>
