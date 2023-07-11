@@ -44,7 +44,7 @@ export function SideNav(): JSX.Element {
     <nav
       className={`z-50 transition-all duration-150 bg-primary text-white fixed sm:left-0 top-0 min-h-screen flex flex-col gap-6 pt-6 ${
         main.isSidebarOpen
-          ? "hidden sm:flex w-48 left-0 items-start"
+          ? "hidden sm:flex w-40 left-0 items-start"
           : "w-3/4 sm:w-16 left-[-100%] sm:right-auto items-start sm:items-center"
       }`}
     >

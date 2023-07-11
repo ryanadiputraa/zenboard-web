@@ -5,10 +5,12 @@ import { AiOutlineHome, AiOutlineSetting } from "react-icons/ai"
 
 import { MainActions, mainReducer, MainState } from "./reducer/main"
 import { UserActions, userReducer, UserState } from "./reducer/user"
+import { BoardActions, boardReducer, BoardState } from "./reducer/board"
 
 type InitialStateType = {
   main: MainState
   user: UserState
+  board: BoardState
 }
 
 const initialState: InitialStateType = {
@@ -44,6 +46,16 @@ const initialState: InitialStateType = {
       verified_email: false,
     },
   },
+  board: {
+    boards: [],
+    activeBoard: {
+      id: "",
+      project_name: "",
+      owner_id: "",
+      picture: "",
+      created_at: "",
+    },
+  },
 }
 
 const AppContext = createContext<{
@@ -51,11 +63,15 @@ const AppContext = createContext<{
   mainDispatch: Dispatch<MainActions>
   user: UserState
   userDispatch: Dispatch<UserActions>
+  board: BoardState
+  boardDispatch: Dispatch<BoardActions>
 }>({
   main: initialState.main,
   mainDispatch: () => null,
   user: initialState.user,
   userDispatch: () => null,
+  board: initialState.board,
+  boardDispatch: () => null,
 })
 
 const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -67,6 +83,10 @@ const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     (user: UserState, actions: UserActions) => userReducer(user, actions),
     initialState.user
   )
+  const [boardState, boardDispatch] = useReducer(
+    (board: BoardState, actions: BoardActions) => boardReducer(board, actions),
+    initialState.board
+  )
 
   return (
     <AppContext.Provider
@@ -75,6 +95,8 @@ const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         mainDispatch,
         user: userState,
         userDispatch,
+        board: boardState,
+        boardDispatch,
       }}
     >
       {children}

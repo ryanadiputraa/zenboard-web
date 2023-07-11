@@ -16,12 +16,12 @@ export function Wrapper({ children }: { children: ReactNode }): JSX.Element {
 
   return (
     <main
-      className={`w-screen h-screen overflow-x-hidden bg-white ${
-        main.isSidebarOpen ? "sm:pl-48" : "sm:pl-16"
+      className={`w-screen h-screen flex flex-col overflow-x-hidden bg-white transition-all duration-150 ${
+        main.isSidebarOpen ? "sm:pl-40" : "sm:pl-16"
       }`}
     >
       <Header />
-      <div className="px-4 py-2 bg-grey-light min-h-[92%]">{children}</div>
+      <div className="bg-grey-light flex-grow">{children}</div>
     </main>
   )
 }

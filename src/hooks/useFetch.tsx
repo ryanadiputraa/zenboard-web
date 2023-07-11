@@ -1,5 +1,6 @@
 "use client"
 
+import { FetchUserBoards } from "@/data/board"
 import { fetchUserInfo, refreshAccessToken } from "@/data/user"
 
 export type FetchResponse<T> = {
@@ -31,11 +32,13 @@ export const useFetch = () => {
       location.reload()
     }
   }
+  const getUserBoards = async () => FetchUserBoards(BASE_URL, headers)
 
   return {
     setAccessTokens,
     getUserInfo,
     refreshJWTToken,
+    getUserBoards,
   }
 }
 
