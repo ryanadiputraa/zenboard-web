@@ -1,14 +1,26 @@
 "use client"
 
 import { useContext } from "react"
-
-import { AppContext } from "@/context"
-import { useFetchUserBoards } from "@/hooks/boards/useFetchUserBoards"
 import { HiPlus } from "react-icons/hi"
 import { SlOptions } from "react-icons/sl"
 
-import { BoardList } from "./components/board-list"
+import { AppContext } from "@/context"
+import { useFetchUserBoards } from "@/hooks/boards/useFetchUserBoards"
 import { useFetchBoardTasks } from "@/hooks/tasks/useFetchBoardTasks"
+import { BoardList } from "./components/board-list"
+import { TaskItem } from "./components/task-item"
+
+const tagColors = [
+  "#EB455F",
+  "#F49D1A",
+  "#19376D",
+  "#42855B",
+  "#635985",
+  "#19A7CE",
+  "#57C5B6",
+]
+
+const tagColorsHashMap: { [key: string]: string } = {}
 
 export default function Dashboard(): JSX.Element {
   const { main, board, task } = useContext(AppContext)
@@ -33,16 +45,23 @@ export default function Dashboard(): JSX.Element {
           {task.tasks.map((tk, i) => (
             <div key={i} className="bg-white p-4 rounded-md w-80">
               <div className="flex justify-between items-start">
-                <h4 className="font-semibold text-sm w-48">{tk.name}</h4>
+                <h4 className="font-semibold w-48">{tk.name}</h4>
                 <div className="flex items-center gap-3">
                   <HiPlus className="text-accent cursor-pointer" />
                   <SlOptions className="cursor-pointer" />
                 </div>
               </div>
-              <div className="flex flex-col">
-                {tk.tasks.map((item, i) => (
-                  <span key={i}>{item.name}</span>
-                ))}
+              <div className="flex flex-col mt-2 gap-2">
+                {tk.tasks.map((item, i) => {
+                  let color = tagColors[i % tagColors.length]
+                  if (tagColorsHashMap[item.tag]) {
+                    color = tagColorsHashMap[item.tag]
+                  } else {
+                    tagColorsHashMap[item.tag] = color
+                  }
+
+                  return <TaskItem key={i} item={item} tagColor={color} />
+                })}
               </div>
             </div>
           ))}
