@@ -77,9 +77,9 @@ export function SideNav(): JSX.Element {
         >
           <span className="text-grey mb-4 text-sm px-4">Menu</span>
           <ul className="w-full flex flex-col gap-1">
-            {Object.keys(main.dashboardPages).map((label) => {
+            {Object.keys(main.dashboardPages).map((label, i) => {
               if (label === "settings") return
-              return <MenuBtn page={main.dashboardPages[label]} key={label} />
+              return <MenuBtn key={i} page={main.dashboardPages[label]} />
             })}
           </ul>
         </div>

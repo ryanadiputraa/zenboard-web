@@ -6,11 +6,13 @@ import { AiOutlineHome, AiOutlineSetting } from "react-icons/ai"
 import { MainActions, mainReducer, MainState } from "./reducer/main"
 import { UserActions, userReducer, UserState } from "./reducer/user"
 import { BoardActions, boardReducer, BoardState } from "./reducer/board"
+import { TaskAction, taskReducer, TaskState } from "./reducer/task"
 
 type InitialStateType = {
   main: MainState
   user: UserState
   board: BoardState
+  task: TaskState
 }
 
 const initialState: InitialStateType = {
@@ -56,6 +58,9 @@ const initialState: InitialStateType = {
       created_at: "",
     },
   },
+  task: {
+    tasks: [],
+  },
 }
 
 const AppContext = createContext<{
@@ -65,6 +70,8 @@ const AppContext = createContext<{
   userDispatch: Dispatch<UserActions>
   board: BoardState
   boardDispatch: Dispatch<BoardActions>
+  task: TaskState
+  taskDispatch: Dispatch<TaskAction>
 }>({
   main: initialState.main,
   mainDispatch: () => null,
@@ -72,6 +79,8 @@ const AppContext = createContext<{
   userDispatch: () => null,
   board: initialState.board,
   boardDispatch: () => null,
+  task: initialState.task,
+  taskDispatch: () => null,
 })
 
 const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -87,6 +96,10 @@ const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     (board: BoardState, actions: BoardActions) => boardReducer(board, actions),
     initialState.board
   )
+  const [taskState, taskDispatch] = useReducer(
+    (task: TaskState, actions: TaskAction) => taskReducer(task, actions),
+    initialState.task
+  )
 
   return (
     <AppContext.Provider
@@ -97,6 +110,8 @@ const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         userDispatch,
         board: boardState,
         boardDispatch,
+        task: taskState,
+        taskDispatch,
       }}
     >
       {children}

@@ -16,7 +16,7 @@ export function BoardList({ boards, activeBoard }: Props): JSX.Element {
   const { boardDispatch } = useContext(AppContext)
 
   return (
-    <div className="w-40 bg-white border-r-2 border-grey-light text-xs">
+    <div className="w-40 bg-white text-xs">
       {boards.map((board) => (
         <div
           key={board.id}

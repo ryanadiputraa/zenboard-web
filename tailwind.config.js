@@ -17,7 +17,7 @@ module.exports = {
         "primary-light": "#323232",
         accent: "#0986F7",
         grey: "#878787",
-        "grey-light": "#F8F8F8",
+        "grey-light": "#F3F3F3",
       },
       keyframes: {
         rotate: {

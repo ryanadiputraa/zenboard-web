@@ -1,6 +1,7 @@
 "use client"
 
 import { FetchUserBoards } from "@/data/board"
+import { FetchBoardTasks } from "@/data/task"
 import { fetchUserInfo, refreshAccessToken } from "@/data/user"
 
 export type FetchResponse<T> = {
@@ -33,12 +34,15 @@ export const useFetch = () => {
     }
   }
   const getUserBoards = async () => FetchUserBoards(BASE_URL, headers)
+  const getBoardTasks = async (boardId: string) =>
+    FetchBoardTasks(BASE_URL, headers, boardId)
 
   return {
     setAccessTokens,
     getUserInfo,
     refreshJWTToken,
     getUserBoards,
+    getBoardTasks,
   }
 }
 
