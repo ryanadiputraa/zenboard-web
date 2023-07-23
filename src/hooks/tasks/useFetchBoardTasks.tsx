@@ -23,5 +23,5 @@ export const useFetchBoardTasks = (boardId: string) => {
       taskDispatch({ type: "SET_TASKS", payload: resp.data })
     }
     fetchUserBoards()
-  }, [boardId])
+  }, [boardId]) // eslint-disable-line
 }

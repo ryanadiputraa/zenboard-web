@@ -15,5 +15,5 @@ export const useActiveDashboardPage = () => {
       type: "SET_ACTIVE_DASHBOARD_PAGE",
       payload: main.dashboardPages[title] ?? main.activeDashboardPage,
     })
-  }, [pathname])
+  }, [pathname]) // eslint-disable-line
 }

@@ -24,5 +24,5 @@ export const useFetchUserBoards = () => {
       }
     }
     fetchUserBoards()
-  }, [])
+  }, [boardDispatch]) // eslint-disable-line
 }

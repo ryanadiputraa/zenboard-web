@@ -23,5 +23,5 @@ export const useFetchUserInfo = () => {
       userDispatch({ type: "SET_USER_INFO", payload: resp.data })
     }
     fetchUserInfo()
-  }, [])
+  }, [userDispatch]) // eslint-disable-line
 }

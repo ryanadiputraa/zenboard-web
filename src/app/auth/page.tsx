@@ -20,7 +20,7 @@ export default function Auth(): JSX.Element {
     if (!jwtToken.access_token) return
     setAccessTokens(jwtToken)
     redirect("/dashboard")
-  }, [jwtToken.access_token])
+  }, [jwtToken.access_token]) // eslint-disable-line
 
   return (
     <div className="flexrc min-h-screen text-center">
