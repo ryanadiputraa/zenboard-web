@@ -9,6 +9,7 @@ import { useFetchUserBoards } from "@/hooks/boards/useFetchUserBoards"
 import { useFetchBoardTasks } from "@/hooks/tasks/useFetchBoardTasks"
 import { BoardList } from "./components/board-list"
 import { TaskItem } from "./components/task-item"
+import { UseWebSocket } from "@/hooks/websocket"
 
 const tagColors = [
   "#EB455F",
@@ -27,6 +28,7 @@ export default function Dashboard(): JSX.Element {
 
   useFetchUserBoards()
   useFetchBoardTasks(board.activeBoard.id)
+  const { send } = UseWebSocket()
 
   return (
     <div className="flex min-h-[100%]">
