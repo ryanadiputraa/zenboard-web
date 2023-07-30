@@ -19,6 +19,9 @@ module.exports = {
         grey: "#878787",
         "grey-light": "#F3F3F3",
       },
+      boxShadow: {
+        sd: "0 0 20px 0px rgba(0, 0, 0, 0.3)",
+      },
       keyframes: {
         rotate: {
           "0%": { transform: "rotate(0deg)" },

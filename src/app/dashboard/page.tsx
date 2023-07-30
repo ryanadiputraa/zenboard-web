@@ -1,8 +1,9 @@
 "use client"
 
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { HiPlus } from "react-icons/hi"
 import { SlOptions } from "react-icons/sl"
+import { GoTrash } from "react-icons/go"
 
 import { AppContext } from "@/context"
 import { useFetchUserBoards } from "@/hooks/boards/useFetchUserBoards"
@@ -25,6 +26,12 @@ const tagColorsHashMap: { [key: string]: string } = {}
 
 export default function Dashboard(): JSX.Element {
   const { main, board, task } = useContext(AppContext)
+  const [taskOption, setTaskOption] = useState<number>(-1)
+
+  const onOpenTaskOption = (i: number) => {
+    if (taskOption === i) setTaskOption(-1)
+    else setTaskOption(i)
+  }
 
   useFetchUserBoards()
   useFetchBoardTasks(board.activeBoard.id)
@@ -45,12 +52,26 @@ export default function Dashboard(): JSX.Element {
           }`}
         >
           {task.tasks.map((tk, i) => (
-            <div key={i} className="bg-white p-4 rounded-md w-80">
+            <div key={i} className="bg-white p-4 rounded-md w-80 shadow-lg">
               <div className="flex justify-between items-start">
                 <h4 className="font-semibold w-48">{tk.name}</h4>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 relative">
                   <HiPlus className="text-accent cursor-pointer" />
-                  <SlOptions className="cursor-pointer" />
+                  <SlOptions
+                    className="cursor-pointer"
+                    onClick={() => onOpenTaskOption(i)}
+                  />
+                  <div
+                    className={`${
+                      taskOption === i ? "" : "hidden"
+                    } absolute top-[1.6rem] right-[0] z-10 bg-white rounded-lg shadow-sd w-44`}
+                  >
+                    <TaskOption
+                      taskId={tk.id}
+                      socketSend={send}
+                      callback={() => setTaskOption(-1)}
+                    />
+                  </div>
                 </div>
               </div>
               <div className="flex flex-col mt-2 gap-2">
@@ -70,5 +91,45 @@ export default function Dashboard(): JSX.Element {
         </div>
       </div>
     </div>
+  )
+}
+
+const TaskOption = ({
+  taskId,
+  socketSend,
+  callback,
+}: {
+  taskId: string
+  socketSend: (key: string, data: any) => void
+  callback: () => any
+}): JSX.Element => {
+  const options = [
+    {
+      name: "delete",
+      ico: <GoTrash />,
+      func: () => socketSend("delete_task", { task_id: taskId }),
+    },
+  ]
+
+  return (
+    <ul
+      className="py-2 text-sm text-black"
+      aria-labelledby="dropdownDefaultButton"
+    >
+      {options.map((option, i) => (
+        <li
+          key={i}
+          className="cursor-pointer block px-4 py-2 hover:bg-accent hover:text-white"
+          onClick={() => {
+            option.func()
+            callback()
+          }}
+        >
+          <span className="capitalize flex items-center justify-between">
+            {option.name} {option.ico}
+          </span>
+        </li>
+      ))}
+    </ul>
   )
 }
