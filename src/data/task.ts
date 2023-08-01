@@ -9,7 +9,7 @@ export interface Task {
 
 export interface TaskItem {
   id: string
-  name: string
+  description: string
   order: number
   tag: string
   assignee: string

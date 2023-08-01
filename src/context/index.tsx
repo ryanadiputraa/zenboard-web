@@ -30,6 +30,7 @@ const initialState: InitialStateType = {
         link: "/dashboard/settings",
       },
     },
+    modal: {},
     activeDashboardPage: {
       label: "",
       ico: <></>,

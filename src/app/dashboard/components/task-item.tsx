@@ -22,7 +22,7 @@ export function TaskItem({ item, tagColor }: Props): JSX.Element {
         <SlOptions />
       </div>
       <div className="line-clamp-3">
-        <p>{item.name}</p>
+        <p>{item.description}</p>
       </div>
     </div>
   )
