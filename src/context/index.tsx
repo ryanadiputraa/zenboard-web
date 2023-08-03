@@ -30,7 +30,18 @@ const initialState: InitialStateType = {
         link: "/dashboard/settings",
       },
     },
-    modal: {},
+    modal: {
+      isOpen: false,
+      title: "",
+      type: null,
+      onClose: () => {},
+      onConfirm: () => {},
+    },
+    toast: {
+      isOpen: false,
+      msg: "",
+      type: "SUCCESS",
+    },
     activeDashboardPage: {
       label: "",
       ico: <></>,

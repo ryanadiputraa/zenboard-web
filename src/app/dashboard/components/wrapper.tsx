@@ -7,7 +7,8 @@ import { useFetchUserInfo } from "@/hooks/user/useFetchUserInfo"
 import { useActiveDashboardPage } from "@/hooks/core/useActiveDashboardPage"
 
 import { Header } from "./header"
-import { Modal } from "./modal"
+import { Modal } from "@/app/components/modal"
+import Toast from "@/app/components/toast"
 
 export function Wrapper({ children }: { children: ReactNode }): JSX.Element {
   const { main } = useContext(AppContext)
@@ -24,6 +25,7 @@ export function Wrapper({ children }: { children: ReactNode }): JSX.Element {
       <Header />
       <div className="bg-grey-light flex-grow">{children}</div>
       <Modal />
+      <Toast />
     </main>
   )
 }

@@ -10,7 +10,7 @@ import { useFetchUserBoards } from "@/hooks/boards/useFetchUserBoards"
 import { useFetchBoardTasks } from "@/hooks/tasks/useFetchBoardTasks"
 import { BoardList } from "./components/board-list"
 import { TaskItem } from "./components/task-item"
-import { UseWebSocket } from "@/hooks/websocket"
+import { UseWebSocket } from "@/hooks/websocket/useWebSocket"
 
 const tagColors = [
   "#EB455F",
