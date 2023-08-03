@@ -5,6 +5,7 @@ import { Dispatch, useContext, useEffect, useState } from "react"
 import { AppContext } from "@/context"
 import { JWTToken, getLSObject } from "../useFetch"
 import { TaskAction } from "@/context/reducer/task"
+import { MainActions } from "@/context/reducer/main"
 
 interface SocketResponseEventMsg<T> {
   key: string
@@ -14,7 +15,7 @@ interface SocketResponseEventMsg<T> {
 }
 
 export const UseWebSocket = () => {
-  const { board, taskDispatch } = useContext(AppContext)
+  const { mainDispatch, board, taskDispatch } = useContext(AppContext)
   const [socket, setSoket] = useState<WebSocket | null>(null)
   const jwtToken = getLSObject<JWTToken>("jwt_token")
 
@@ -31,7 +32,8 @@ export const UseWebSocket = () => {
     }`
     const ws = new WebSocket(wsURL)
 
-    ws.onmessage = (e) => handleSocketResponseEvent(e, taskDispatch)
+    ws.onmessage = (e) =>
+      handleSocketResponseEvent(e, mainDispatch, taskDispatch)
 
     ws.onopen = () => {
       ws.send(
@@ -49,16 +51,25 @@ export const UseWebSocket = () => {
 
 const handleSocketResponseEvent = (
   e: MessageEvent<any>,
+  mainDispatch: Dispatch<MainActions>,
   taskDispatch: Dispatch<TaskAction>
 ) => {
   const msg: SocketResponseEventMsg<any> = JSON.parse(e.data)
   console.log(msg)
 
+  const catchError = (msg: string) => {
+    mainDispatch({
+      type: "TOGGLE_TOAST",
+      payload: { isOpen: true, msg: msg, type: "ERROR" },
+    })
+  }
+
   switch (msg.key) {
     case "delete_task":
       const msg: SocketResponseEventMsg<string> = JSON.parse(e.data)
       if (!msg.is_success) {
-        // TODO: toast error
+        catchError(msg.message)
+        return
       }
       taskDispatch({ type: "DELETE_TASK", task_id: msg.data ?? "" })
   }
