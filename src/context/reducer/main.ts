@@ -15,15 +15,13 @@ export const mainReducer = (state: MainState, action: MainActions) => {
       }
 
     case "TOGGLE_MODAL":
-      const { isOpen, title, type, onConfirm, onClose } = action.payload
+      const { isOpen, title, type } = action.payload
       return {
         ...state,
         modal: {
           isOpen: isOpen ?? false,
           type: type ?? null,
           title: title ?? "",
-          onClose: onClose ?? function () {},
-          onConfirm: onConfirm ?? function () {},
         },
       }
 
@@ -38,6 +36,12 @@ export const mainReducer = (state: MainState, action: MainActions) => {
         },
       }
 
+    case "SET_WEBSOCKET":
+      return {
+        ...state,
+        websocket: action.socket,
+      }
+
     default:
       return state
   }
@@ -49,6 +53,7 @@ export interface MainState {
   activeDashboardPage: DashboardPage
   modal: ModalState
   toast: ToastState
+  websocket: WebSocket | null
 }
 
 export type MainActions =
@@ -56,6 +61,7 @@ export type MainActions =
   | { type: "SET_ACTIVE_DASHBOARD_PAGE"; payload: DashboardPage }
   | { type: "TOGGLE_MODAL"; payload: ModalStatePayload }
   | { type: "TOGGLE_TOAST"; payload: ToastStatePayload }
+  | { type: "SET_WEBSOCKET"; socket: WebSocket | null }
 
 export interface DashboardPages {
   [label: string]: DashboardPage
@@ -71,13 +77,11 @@ export interface ModalState {
   isOpen: boolean
   type: ModalType
   title: string
-  onClose: () => any
-  onConfirm: () => any
 }
 
 type ModalStatePayload = Partial<ModalState>
 
-type ModalType = null | "Confirm"
+type ModalType = null | "ADD_TASK"
 
 export interface ToastState {
   isOpen: boolean

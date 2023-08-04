@@ -4,23 +4,17 @@ import { useContext } from "react"
 import { AiOutlineClose } from "react-icons/ai"
 
 import { AppContext } from "@/context"
+import { AddTask } from "./modal-item/add-task"
 
 export const Modal = (): JSX.Element => {
   const { main, mainDispatch } = useContext(AppContext)
 
-  const onClose = () => {
-    mainDispatch({ type: "TOGGLE_MODAL", payload: {} })
-    if (main.modal.onClose) main.modal.onClose()
-  }
-
-  const onConfirm = () => {
-    if (main.modal.onConfirm) main.modal.onConfirm()
-  }
+  const onClose = () => mainDispatch({ type: "TOGGLE_MODAL", payload: {} })
 
   const ModalContent = (): JSX.Element => {
     switch (main.modal.type) {
-      case "Confirm":
-        return <Confirm />
+      case "ADD_TASK":
+        return <AddTask />
 
       default:
         return <></>
@@ -51,8 +45,4 @@ export const Modal = (): JSX.Element => {
       </div>
     </div>
   )
-}
-
-const Confirm = (): JSX.Element => {
-  return <></>
 }

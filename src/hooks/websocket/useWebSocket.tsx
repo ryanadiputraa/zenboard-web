@@ -6,6 +6,7 @@ import { AppContext } from "@/context"
 import { JWTToken, getLSObject } from "../useFetch"
 import { TaskAction } from "@/context/reducer/task"
 import { MainActions } from "@/context/reducer/main"
+import { Task } from "@/data/task"
 
 interface SocketResponseEventMsg<T> {
   key: string
@@ -14,18 +15,17 @@ interface SocketResponseEventMsg<T> {
   data?: T
 }
 
+export const sendMessage = (ws: WebSocket, key: string, data: any) => {
+  const msg = JSON.stringify({ key, data })
+  ws.send(msg)
+}
+
 export const UseWebSocket = () => {
-  const { mainDispatch, board, taskDispatch } = useContext(AppContext)
-  const [socket, setSoket] = useState<WebSocket | null>(null)
+  const { main, mainDispatch, board, taskDispatch } = useContext(AppContext)
   const jwtToken = getLSObject<JWTToken>("jwt_token")
 
-  const send = (key: string, data: any) => {
-    const msg = JSON.stringify({ key, data })
-    socket?.send(msg)
-  }
-
   useEffect(() => {
-    if (socket) socket.close()
+    if (main.websocket) return
     if (!board.activeBoard.id) return
     const wsURL = `${String(process.env.NEXT_PUBLIC_WS_URL)}?board_id=${
       board.activeBoard.id
@@ -42,11 +42,11 @@ export const UseWebSocket = () => {
           data: { access_token: jwtToken?.access_token },
         })
       )
-      setSoket(ws)
+      mainDispatch({ type: "SET_WEBSOCKET", socket: ws })
     }
-  }, [board.activeBoard.id])
 
-  return { send }
+    return () => main.websocket?.close()
+  }, [board.activeBoard.id])
 }
 
 const handleSocketResponseEvent = (
@@ -65,12 +65,31 @@ const handleSocketResponseEvent = (
   }
 
   switch (msg.key) {
-    case "delete_task":
-      const msg: SocketResponseEventMsg<string> = JSON.parse(e.data)
-      if (!msg.is_success) {
-        catchError(msg.message)
+    case "create_task":
+      const createTaskMsg: SocketResponseEventMsg<Task> = JSON.parse(e.data)
+      if (!createTaskMsg.is_success) {
+        catchError(createTaskMsg.message)
         return
       }
-      taskDispatch({ type: "DELETE_TASK", task_id: msg.data ?? "" })
+      if (!createTaskMsg.data) break
+      taskDispatch({ type: "ADD_TASK", payload: createTaskMsg.data })
+      mainDispatch({
+        type: "TOGGLE_TOAST",
+        payload: { isOpen: true, type: "SUCCESS", msg: "Task created!" },
+      })
+      break
+
+    case "delete_task":
+      const deleteTaskMsg: SocketResponseEventMsg<string> = JSON.parse(e.data)
+      if (!deleteTaskMsg.is_success) {
+        catchError(deleteTaskMsg.message)
+        return
+      }
+      taskDispatch({ type: "DELETE_TASK", task_id: deleteTaskMsg.data ?? "" })
+      mainDispatch({
+        type: "TOGGLE_TOAST",
+        payload: { isOpen: true, type: "SUCCESS", msg: "Task deleted!" },
+      })
+      break
   }
 }

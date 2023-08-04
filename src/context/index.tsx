@@ -34,8 +34,6 @@ const initialState: InitialStateType = {
       isOpen: false,
       title: "",
       type: null,
-      onClose: () => {},
-      onConfirm: () => {},
     },
     toast: {
       isOpen: false,
@@ -47,6 +45,7 @@ const initialState: InitialStateType = {
       ico: <></>,
       link: "",
     },
+    websocket: null,
   },
   user: {
     userInfo: {

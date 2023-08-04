@@ -9,12 +9,14 @@ import { useActiveDashboardPage } from "@/hooks/core/useActiveDashboardPage"
 import { Header } from "./header"
 import { Modal } from "@/app/components/modal"
 import Toast from "@/app/components/toast"
+import { UseWebSocket } from "@/hooks/websocket/useWebSocket"
 
 export function Wrapper({ children }: { children: ReactNode }): JSX.Element {
   const { main } = useContext(AppContext)
 
   useFetchUserInfo()
   useActiveDashboardPage()
+  UseWebSocket()
 
   return (
     <main

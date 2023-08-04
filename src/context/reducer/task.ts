@@ -8,6 +8,12 @@ export const taskReducer = (state: TaskState, action: TaskAction) => {
         tasks: action.payload,
       }
 
+    case "ADD_TASK":
+      return {
+        ...state,
+        tasks: [...state.tasks, action.payload],
+      }
+
     case "DELETE_TASK":
       return {
         ...state,
@@ -25,4 +31,5 @@ export interface TaskState {
 
 export type TaskAction =
   | { type: "SET_TASKS"; payload: Task[] }
+  | { type: "ADD_TASK"; payload: Task }
   | { type: "DELETE_TASK"; task_id: string }
