@@ -1,10 +1,11 @@
 "use client"
 
-import { useContext, useState } from "react"
+import { FormEvent, useContext, useEffect, useRef, useState } from "react"
 import { HiPlus } from "react-icons/hi"
 import { SlOptions } from "react-icons/sl"
 import { GoTrash } from "react-icons/go"
 import { MdAdd } from "react-icons/md"
+import { BiEditAlt } from "react-icons/bi"
 
 import { AppContext } from "@/context"
 import { useFetchUserBoards } from "@/hooks/boards/useFetchUserBoards"
@@ -27,11 +28,32 @@ const tagColorsHashMap: { [key: string]: string } = {}
 
 export default function Dashboard(): JSX.Element {
   const { main, mainDispatch, board, task } = useContext(AppContext)
+  const projectNameRef = useRef<HTMLInputElement | null>(null)
   const [taskOption, setTaskOption] = useState<number>(-1)
+  const [projectName, setProjectName] = useState<string>("")
+
+  const [isEditProjectName, setIsEditProjectName] = useState<boolean>(false)
 
   const onOpenTaskOption = (i: number) => {
     if (taskOption === i) setTaskOption(-1)
     else setTaskOption(i)
+  }
+
+  const handleEditProjectName = () => {
+    setIsEditProjectName(true)
+    projectNameRef.current?.focus()
+  }
+
+  const onChangeProjectName = (e: FormEvent) => {
+    e.preventDefault()
+    projectNameRef.current?.blur()
+  }
+
+  const handleBlurProjectName = () => {
+    setIsEditProjectName(false)
+    if (projectName === board.activeBoard.project_name) return
+    if (!main.websocket) return
+    sendMessage(main.websocket, "change_project_name", { name: projectName })
   }
 
   const onAddTask = () =>
@@ -43,14 +65,37 @@ export default function Dashboard(): JSX.Element {
   useFetchUserBoards()
   useFetchBoardTasks(board.activeBoard.id)
 
+  useEffect(() => {
+    setProjectName(board.activeBoard.project_name)
+  }, [board.activeBoard.project_name])
+
   return (
     <div className="flex min-h-[100%]">
       <BoardList boards={board.boards} activeBoard={board.activeBoard} />
       <div className="flex flex-col w-full py-4 px-6">
         <div className="h-16 w-full flex items-start justify-between">
-          <h3 className="font-bold text-xl">
-            {board.activeBoard.project_name}
-          </h3>
+          <form
+            className="flex items-center justify-start gap-2"
+            onSubmit={onChangeProjectName}
+          >
+            <BiEditAlt
+              className="text-xl cursor-pointer"
+              onClick={handleEditProjectName}
+            />
+            <input
+              ref={projectNameRef}
+              className={`font-bold text-xl cursor-default w-auto ${
+                isEditProjectName
+                  ? "bg-white outline-accent"
+                  : "bg-transparent outline-none"
+              }`}
+              value={projectName}
+              readOnly={!isEditProjectName}
+              onBlur={handleBlurProjectName}
+              onChange={(e) => setProjectName(e.target.value)}
+              onClick={handleEditProjectName}
+            />
+          </form>
           <button
             className="btn-primary flex items-center gap-2 text-sm"
             onClick={onAddTask}

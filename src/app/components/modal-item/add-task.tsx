@@ -6,14 +6,13 @@ import { AppContext } from "@/context"
 import { sendMessage } from "@/hooks/websocket/useWebSocket"
 
 export const AddTask = (): JSX.Element => {
-  const { main, mainDispatch, board } = useContext(AppContext)
+  const { main, mainDispatch } = useContext(AppContext)
   const [task, setTask] = useState<string>("")
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault()
     if (!main.websocket) return
     sendMessage(main.websocket, "create_task", {
-      board_id: board.activeBoard.id,
       task_name: task,
     })
     mainDispatch({ type: "TOGGLE_MODAL", payload: {} })

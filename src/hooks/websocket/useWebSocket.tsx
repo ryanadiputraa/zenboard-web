@@ -7,6 +7,8 @@ import { JWTToken, getLSObject } from "../useFetch"
 import { TaskAction } from "@/context/reducer/task"
 import { MainActions } from "@/context/reducer/main"
 import { Task } from "@/data/task"
+import { BoardActions } from "@/context/reducer/board"
+import { Board } from "@/data/board"
 
 interface SocketResponseEventMsg<T> {
   key: string
@@ -21,7 +23,8 @@ export const sendMessage = (ws: WebSocket, key: string, data: any) => {
 }
 
 export const UseWebSocket = () => {
-  const { main, mainDispatch, board, taskDispatch } = useContext(AppContext)
+  const { main, mainDispatch, board, boardDispatch, taskDispatch } =
+    useContext(AppContext)
   const jwtToken = getLSObject<JWTToken>("jwt_token")
 
   useEffect(() => {
@@ -33,7 +36,7 @@ export const UseWebSocket = () => {
     const ws = new WebSocket(wsURL)
 
     ws.onmessage = (e) =>
-      handleSocketResponseEvent(e, mainDispatch, taskDispatch)
+      handleSocketResponseEvent(e, mainDispatch, boardDispatch, taskDispatch)
 
     ws.onopen = () => {
       ws.send(
@@ -52,6 +55,7 @@ export const UseWebSocket = () => {
 const handleSocketResponseEvent = (
   e: MessageEvent<any>,
   mainDispatch: Dispatch<MainActions>,
+  boardDispatch: Dispatch<BoardActions>,
   taskDispatch: Dispatch<TaskAction>
 ) => {
   const msg: SocketResponseEventMsg<any> = JSON.parse(e.data)
@@ -65,6 +69,21 @@ const handleSocketResponseEvent = (
   }
 
   switch (msg.key) {
+    case "change_project_name":
+      const changeProjectNameMsg: SocketResponseEventMsg<Board> = JSON.parse(
+        e.data
+      )
+      if (!changeProjectNameMsg.is_success) {
+        catchError(changeProjectNameMsg.message)
+        return
+      }
+      if (!changeProjectNameMsg.data) break
+      boardDispatch({
+        type: "SET_ACTIVE_BOARD",
+        board: changeProjectNameMsg.data,
+      })
+      break
+
     case "create_task":
       const createTaskMsg: SocketResponseEventMsg<Task> = JSON.parse(e.data)
       if (!createTaskMsg.is_success) {
