@@ -2,10 +2,10 @@
 
 import { useContext } from "react"
 import { MdKeyboardArrowRight } from "react-icons/md"
+import { format } from "date-fns"
 
 import { AppContext } from "@/context"
 import { Board } from "@/data/board"
-import { format } from "date-fns"
 
 interface Props {
   boards: Board[]

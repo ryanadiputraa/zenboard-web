@@ -1,4 +1,4 @@
-import { FetchResponse, parseErrorMsg } from "@/hooks/useFetch"
+import { FetchResponse, parseErrorMsg } from "@/hooks/fetch/useFetch"
 
 export interface Task {
   id: string

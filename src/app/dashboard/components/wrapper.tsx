@@ -5,7 +5,6 @@ import { ReactNode, useContext } from "react"
 import { AppContext } from "@/context"
 import { useFetchUserInfo } from "@/hooks/user/useFetchUserInfo"
 import { useActiveDashboardPage } from "@/hooks/core/useActiveDashboardPage"
-
 import { Header } from "./header"
 import { Modal } from "@/app/components/modal"
 import Toast from "@/app/components/toast"

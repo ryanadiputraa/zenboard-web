@@ -1,4 +1,6 @@
-import { Task, TaskItem } from "@/data/task"
+import { DraggableLocation } from "react-beautiful-dnd"
+
+import { Task } from "@/data/task"
 
 export const taskReducer = (state: TaskState, action: TaskAction) => {
   switch (action.type) {
@@ -20,17 +22,47 @@ export const taskReducer = (state: TaskState, action: TaskAction) => {
         tasks: state.tasks.filter((task) => task.id !== action.task_id),
       }
 
-    case "REORDER_TASK":
+    case "REORDER_TASKS":
       const reordered = [...state.tasks]
-      reordered.forEach((task) => {
-        if (task.id !== action.task_id) return
-        const [removed] = task.tasks.splice(action.sourceIdx, 1)
-        task.tasks.splice(action.destionationIdx, 0, removed)
-      })
+      const [removed] = reordered.splice(action.sourceIdx, 1)
+      reordered.splice(action.destinationIdx, 0, removed)
 
       return {
         ...state,
         tasks: reordered,
+      }
+
+    case "REORDER_TASK_ITEMS":
+      const { source, destination } = action
+      const taskSourceIdx = state.tasks.findIndex(
+        (task) => task.id === source.droppableId
+      )
+      const taskDestinationIdx = state.tasks.findIndex(
+        (task) => task.id === destination.droppableId
+      )
+
+      const newSourceItems = [...state.tasks[taskSourceIdx].tasks]
+      const newDestinationItems =
+        source.droppableId !== destination.droppableId
+          ? [...state.tasks[taskDestinationIdx].tasks]
+          : newSourceItems
+
+      const [deleted] = newSourceItems.splice(source.index, 1)
+      newDestinationItems.splice(destination.index, 0, deleted)
+
+      const updatedTask = [...state.tasks]
+      updatedTask[taskSourceIdx] = {
+        ...updatedTask[taskSourceIdx],
+        tasks: newSourceItems,
+      }
+      updatedTask[taskDestinationIdx] = {
+        ...updatedTask[taskDestinationIdx],
+        tasks: newDestinationItems,
+      }
+
+      return {
+        ...state,
+        tasks: updatedTask,
       }
 
     default:
@@ -47,8 +79,12 @@ export type TaskAction =
   | { type: "ADD_TASK"; payload: Task }
   | { type: "DELETE_TASK"; task_id: string }
   | {
-      type: "REORDER_TASK"
-      task_id: string
+      type: "REORDER_TASKS"
       sourceIdx: number
-      destionationIdx: number
+      destinationIdx: number
+    }
+  | {
+      type: "REORDER_TASK_ITEMS"
+      source: DraggableLocation
+      destination: DraggableLocation
     }

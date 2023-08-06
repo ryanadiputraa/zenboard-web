@@ -19,7 +19,11 @@ export function TaskItem({ item, index, tagColor }: Props): JSX.Element {
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className="flex flex-col text-sm gap-2 p-3 border-grey border-[0.05rem] rounded-md cursor-pointer"
+          className={`flex flex-col text-sm gap-2 p-3 border-[0.05rem] rounded-md cursor-pointer ${
+            snapshot.isDragging
+              ? "bg-accent/70 border-accent"
+              : "bg-white border-grey"
+          }`}
         >
           <div className="flex justify-between items-center">
             <span

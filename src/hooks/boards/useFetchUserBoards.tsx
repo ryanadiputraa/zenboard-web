@@ -4,7 +4,7 @@ import { useContext, useEffect } from "react"
 import { redirect } from "next/navigation"
 
 import { AppContext } from "@/context"
-import { JWTToken, getLSObject, useFetch } from "../useFetch"
+import { JWTToken, getLSObject, useFetch } from "../fetch/useFetch"
 
 export const useFetchUserBoards = () => {
   const { boardDispatch } = useContext(AppContext)

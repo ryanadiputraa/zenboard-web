@@ -1,9 +1,6 @@
 "use client"
 
 import { FormEvent, useContext, useEffect, useRef, useState } from "react"
-import { HiPlus } from "react-icons/hi"
-import { SlOptions } from "react-icons/sl"
-import { GoTrash } from "react-icons/go"
 import { MdAdd } from "react-icons/md"
 import { BiEditAlt } from "react-icons/bi"
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd"
@@ -12,34 +9,16 @@ import { AppContext } from "@/context"
 import { useFetchUserBoards } from "@/hooks/boards/useFetchUserBoards"
 import { useFetchBoardTasks } from "@/hooks/tasks/useFetchBoardTasks"
 import { BoardList } from "./components/board-list"
-import { TaskItem } from "./components/task-item"
 import { sendMessage } from "@/hooks/websocket/useWebSocket"
-
-const tagColors = [
-  "#EB455F",
-  "#F49D1A",
-  "#19376D",
-  "#42855B",
-  "#635985",
-  "#19A7CE",
-  "#57C5B6",
-]
-
-const tagColorsHashMap: { [key: string]: string } = {}
+import { TaskList } from "./components/task-list"
 
 export default function Dashboard(): JSX.Element {
   const { main, mainDispatch, board, task, taskDispatch } =
     useContext(AppContext)
   const projectNameRef = useRef<HTMLInputElement | null>(null)
-  const [taskOption, setTaskOption] = useState<number>(-1)
   const [projectName, setProjectName] = useState<string>("")
 
   const [isEditProjectName, setIsEditProjectName] = useState<boolean>(false)
-
-  const onOpenTaskOption = (i: number) => {
-    if (taskOption === i) setTaskOption(-1)
-    else setTaskOption(i)
-  }
 
   const handleEditProjectName = () => {
     setIsEditProjectName(true)
@@ -65,9 +44,10 @@ export default function Dashboard(): JSX.Element {
     })
 
   const handleDragEnd = (result: DropResult) => {
-    const { destination, source, draggableId, type } = result
+    const { destination, source, type } = result
+    if (!destination) return
     if (
-      source.droppableId === destination?.droppableId &&
+      source.droppableId === destination.droppableId &&
       source.index === destination.index
     ) {
       return
@@ -75,14 +55,21 @@ export default function Dashboard(): JSX.Element {
 
     if (type === "group") {
       taskDispatch({
-        type: "REORDER_TASK",
-        task_id: destination?.droppableId ?? "",
-        destionationIdx: destination?.index ?? 0,
+        type: "REORDER_TASKS",
+        destinationIdx: destination.index ?? 0,
         sourceIdx: source.index,
       })
-      // TODO: call api to update task order
+      return
     }
+
+    taskDispatch({
+      type: "REORDER_TASK_ITEMS",
+      source: source,
+      destination: destination,
+    })
   }
+
+  // TODO: call api to update task order and task items
 
   useFetchUserBoards()
   useFetchBoardTasks(board.activeBoard.id)
@@ -126,113 +113,26 @@ export default function Dashboard(): JSX.Element {
           </button>
         </div>
         <DragDropContext onDragEnd={handleDragEnd}>
-          <div
-            className={`flex items-start gap-8 flex-grow no-scrollbar overflow-auto h-[80vh] ${
-              main.isSidebarOpen
-                ? "w-[60vw] md:w-[75vw]"
-                : "w-[72vw] md:w-[82vw]"
-            }`}
-          >
-            {task.tasks.map((tk, i) => (
-              <Droppable key={tk.id} droppableId={tk.id} type="group">
-                {(provided, snapshot) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                    className="bg-white p-4 rounded-md w-80 shadow-lg"
-                  >
-                    <div className="flex justify-between items-start">
-                      <h4 className="font-semibold w-48">{tk.name}</h4>
-                      <div className="flex items-center gap-3 relative">
-                        <HiPlus className="text-accent cursor-pointer" />
-                        <SlOptions
-                          className="cursor-pointer"
-                          onClick={() => onOpenTaskOption(i)}
-                        />
-                        <div
-                          className={`${
-                            taskOption === i ? "" : "hidden"
-                          } absolute top-[1.6rem] right-[0] z-10 bg-white rounded-lg shadow-sd w-44`}
-                        >
-                          <TaskOption
-                            taskId={tk.id}
-                            socketSend={(key: string, data: any) =>
-                              main.websocket
-                                ? sendMessage(main.websocket, key, data)
-                                : {}
-                            }
-                            callback={() => setTaskOption(-1)}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex flex-col mt-2 gap-2">
-                      {tk.tasks.map((item, i) => {
-                        let color = tagColors[i % tagColors.length]
-                        if (tagColorsHashMap[item.tag]) {
-                          color = tagColorsHashMap[item.tag]
-                        } else {
-                          tagColorsHashMap[item.tag] = color
-                        }
-
-                        return (
-                          <TaskItem
-                            key={item.id}
-                            item={item}
-                            index={i}
-                            tagColor={color}
-                          />
-                        )
-                      })}
-                    </div>
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            ))}
-          </div>
+          <Droppable droppableId="ROOT" type="group" direction="horizontal">
+            {(provided, snapshot) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className={`flex items-start gap-8 flex-grow no-scrollbar overflow-auto h-[80vh] ${
+                  main.isSidebarOpen
+                    ? "w-[60vw] md:w-[75vw]"
+                    : "w-[72vw] md:w-[82vw]"
+                }`}
+              >
+                {task.tasks.map((tk, i) => (
+                  <TaskList task={tk} index={i} />
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
         </DragDropContext>
       </div>
     </div>
-  )
-}
-
-const TaskOption = ({
-  taskId,
-  socketSend,
-  callback,
-}: {
-  taskId: string
-  socketSend: (key: string, data: any) => void
-  callback: () => any
-}): JSX.Element => {
-  const options = [
-    {
-      name: "delete",
-      ico: <GoTrash />,
-      func: () => socketSend("delete_task", { task_id: taskId }),
-    },
-  ]
-
-  return (
-    <ul
-      className="py-2 text-sm text-black"
-      aria-labelledby="dropdownDefaultButton"
-    >
-      {options.map((option, i) => (
-        <li
-          key={i}
-          className="cursor-pointer block px-4 py-2 hover:bg-accent hover:text-white"
-          onClick={() => {
-            option.func()
-            callback()
-          }}
-        >
-          <span className="capitalize flex items-center justify-between">
-            {option.name} {option.ico}
-          </span>
-        </li>
-      ))}
-    </ul>
   )
 }
