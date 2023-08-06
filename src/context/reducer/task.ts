@@ -20,6 +20,19 @@ export const taskReducer = (state: TaskState, action: TaskAction) => {
         tasks: state.tasks.filter((task) => task.id !== action.task_id),
       }
 
+    case "REORDER_TASK":
+      const reordered = [...state.tasks]
+      reordered.forEach((task) => {
+        if (task.id !== action.task_id) return
+        const [removed] = task.tasks.splice(action.sourceIdx, 1)
+        task.tasks.splice(action.destionationIdx, 0, removed)
+      })
+
+      return {
+        ...state,
+        tasks: reordered,
+      }
+
     default:
       return state
   }
@@ -33,3 +46,9 @@ export type TaskAction =
   | { type: "SET_TASKS"; payload: Task[] }
   | { type: "ADD_TASK"; payload: Task }
   | { type: "DELETE_TASK"; task_id: string }
+  | {
+      type: "REORDER_TASK"
+      task_id: string
+      sourceIdx: number
+      destionationIdx: number
+    }
