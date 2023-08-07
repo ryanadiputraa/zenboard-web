@@ -22,6 +22,7 @@ const tagColors = [
 ]
 
 const tagColorsHashMap: { [key: string]: string } = {}
+let spliceCount = 0
 
 interface Props {
   task: Task
@@ -78,11 +79,15 @@ export const TaskList = ({ task, index }: Props): JSX.Element => {
                 </div>
                 <div className="flex flex-col mt-2 gap-2">
                   {task.tasks.map((item, i) => {
-                    let color = tagColors[i % tagColors.length]
+                    const idx = (i % tagColors.length) - spliceCount
+                    let color = tagColors[idx]
+
                     if (tagColorsHashMap[item.tag]) {
                       color = tagColorsHashMap[item.tag]
                     } else {
                       tagColorsHashMap[item.tag] = color
+                      tagColors.splice(idx, 1)
+                      spliceCount++
                     }
 
                     return (
