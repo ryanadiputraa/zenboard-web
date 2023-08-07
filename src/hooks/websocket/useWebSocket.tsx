@@ -4,7 +4,7 @@ import { Dispatch, useContext, useEffect } from "react"
 
 import { AppContext } from "@/context"
 import { JWTToken, getLSObject } from "../fetch/useFetch"
-import { TaskAction } from "@/context/reducer/task"
+import { TaskAction, TaskState } from "@/context/reducer/task"
 import { MainActions } from "@/context/reducer/main"
 import { Task } from "@/data/task"
 import { BoardActions } from "@/context/reducer/board"
@@ -23,7 +23,7 @@ export const sendMessage = (ws: WebSocket, key: string, data: any) => {
 }
 
 export const UseWebSocket = () => {
-  const { main, mainDispatch, board, boardDispatch, taskDispatch } =
+  const { main, mainDispatch, board, boardDispatch, task, taskDispatch } =
     useContext(AppContext)
   const jwtToken = getLSObject<JWTToken>("jwt_token")
 
@@ -110,5 +110,17 @@ const handleSocketResponseEvent = (
         payload: { isOpen: true, type: "SUCCESS", msg: "Task deleted!" },
       })
       break
+
+    case "reorder_task":
+      const reorderTaskMsg: SocketResponseEventMsg<Task[]> = JSON.parse(e.data)
+      if (!reorderTaskMsg.is_success) {
+        catchError(reorderTaskMsg.message)
+        return
+      }
+      if (!reorderTaskMsg.data) return
+      taskDispatch({
+        type: "BROADCAST_REORDER_TASKS",
+        tasks: reorderTaskMsg.data,
+      })
   }
 }

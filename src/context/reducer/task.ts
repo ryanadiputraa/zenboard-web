@@ -41,6 +41,23 @@ export const taskReducer = (state: TaskState, action: TaskAction) => {
         tasks: reordered,
       }
 
+    case "BROADCAST_REORDER_TASKS":
+      const reorder: Task[] = []
+      action.tasks.forEach((task) => {
+        state.tasks.forEach((t) => {
+          if (t.id === task.id) {
+            task.tasks = t.tasks
+            return
+          }
+        })
+        reorder.push(task)
+      })
+
+      return {
+        ...state,
+        tasks: reorder,
+      }
+
     case "REORDER_TASK_ITEMS":
       const { source, destination } = action
       const taskSourceIdx = state.tasks.findIndex(
@@ -92,6 +109,10 @@ export type TaskAction =
       sourceIdx: number
       destinationIdx: number
       updateTask: (data: any) => void
+    }
+  | {
+      type: "BROADCAST_REORDER_TASKS"
+      tasks: Task[]
     }
   | {
       type: "REORDER_TASK_ITEMS"
