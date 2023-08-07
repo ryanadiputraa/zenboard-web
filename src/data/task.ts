@@ -7,6 +7,10 @@ export interface Task {
   tasks: TaskItem[]
 }
 
+export interface TaskDTO
+  extends Pick<Task, "id" | "order">,
+    Partial<Pick<Task, "name" | "tasks">> {}
+
 export interface TaskItem {
   id: string
   description: string

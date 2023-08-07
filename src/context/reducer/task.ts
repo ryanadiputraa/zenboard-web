@@ -1,6 +1,6 @@
 import { DraggableLocation } from "react-beautiful-dnd"
 
-import { Task } from "@/data/task"
+import { Task, TaskDTO } from "@/data/task"
 
 export const taskReducer = (state: TaskState, action: TaskAction) => {
   switch (action.type) {
@@ -23,9 +23,18 @@ export const taskReducer = (state: TaskState, action: TaskAction) => {
       }
 
     case "REORDER_TASKS":
+      const { sourceIdx, destinationIdx, updateTask } = action
+
       const reordered = [...state.tasks]
-      const [removed] = reordered.splice(action.sourceIdx, 1)
-      reordered.splice(action.destinationIdx, 0, removed)
+      const [removed] = reordered.splice(sourceIdx, 1)
+      reordered.splice(destinationIdx, 0, removed)
+
+      const payload: TaskDTO[] = []
+      reordered.forEach((item, i) => {
+        reordered[i].order = i + 1
+        payload.push({ id: item.id, order: item.order })
+      })
+      updateTask(payload)
 
       return {
         ...state,
@@ -82,6 +91,7 @@ export type TaskAction =
       type: "REORDER_TASKS"
       sourceIdx: number
       destinationIdx: number
+      updateTask: (data: any) => void
     }
   | {
       type: "REORDER_TASK_ITEMS"

@@ -58,6 +58,10 @@ export default function Dashboard(): JSX.Element {
         type: "REORDER_TASKS",
         destinationIdx: destination.index ?? 0,
         sourceIdx: source.index,
+        updateTask: (data: any) => {
+          if (!main.websocket) return
+          sendMessage(main.websocket, "reorder_task", data)
+        },
       })
       return
     }
@@ -68,8 +72,6 @@ export default function Dashboard(): JSX.Element {
       destination: destination,
     })
   }
-
-  // TODO: call api to update task order and task items
 
   useFetchUserBoards()
   useFetchBoardTasks(board.activeBoard.id)
